@@ -1,0 +1,137 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: Generate APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout signing repo
+        uses: actions/checkout@v4
+        with:
+          repository: w3coach/signing
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: keystore
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: "24"
+
+      - name: Copy Gradle Properties
+        run: |
+          mkdir -p $HOME/.gradle
+          cp keystore/gradle.properties $HOME/.gradle/gradle.properties
+
+      - name: Set execution flag for gradlew
+        run: chmod +x gradlew
+
+      - name: Build APK
+        run: bash ./gradlew assembleRelease --stacktrace
+
+      - name: Get Version Name
+        id: version
+        run: |
+          versionName=$(grep " verName" build.gradle | cut -d'"' -f2)
+          versionCode=$(grep " verCode" build.gradle | awk '{ print $3; }')
+          echo "VERSION_NAME=$versionName" >> $GITHUB_ENV
+          echo "VERSION_CODE=$versionCode" >> $GITHUB_ENV
+          echo "version_name=$versionName" >> $GITHUB_OUTPUT
+
+      - name: Find APK path
+        run: |
+          apkPath=$(find app/build/outputs/apk/release -name "*.apk" -type f | head -1)
+          echo "Found APK: $apkPath"
+          echo "APK_PATH=$apkPath" >> $GITHUB_ENV
+
+      - name: Generate version JSON
+        run: |
+          echo "{\"versionCode\": ${{ env.VERSION_CODE }}, \"versionName\": \"${{ env.VERSION_NAME }}\"}" > w3coachtab.json
+          cat w3coachtab.json
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: ${{ env.APK_PATH }}
+
+      - name: Upload version JSON artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-json
+          path: w3coachtab.json
+
+  release:
+    name: Release APK
+    needs: apk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - name: Get Version Name
+        run: |
+          versionName=$(grep " verName" build.gradle | cut -d'"' -f2)
+          echo "VERSION_NAME=$versionName" >> $GITHUB_ENV
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: apk
+
+      - name: Download version JSON
+        uses: actions/download-artifact@v4
+        with:
+          name: version-json
+
+      - name: Find APK path
+        run: |
+          apkPath=$(find . -path "*/apk/release/*.apk" -o -name "w3coachtab-*.apk" | head -1)
+          # Fallback: any apk except in assets
+          if [ -z "$apkPath" ]; then
+            apkPath=$(find . -name "*.apk" -not -path "*/assets/*" -type f | head -1)
+          fi
+          echo "Found APK: $apkPath"
+          echo "APK_PATH=$apkPath" >> $GITHUB_ENV
+
+      - name: Create Git tag if not exists
+        run: |
+          git config user.email "ci@w3coach.de"
+          git config user.name "W3Coach CI"
+          git tag -d v${{ env.VERSION_NAME }} || true
+          git push origin :refs/tags/v${{ env.VERSION_NAME }} || true
+          git tag v${{ env.VERSION_NAME }}
+          git push origin v${{ env.VERSION_NAME }}
+
+      - name: Upload APK to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.APK_PATH }}
+          asset_name: w3coachtab.apk
+          tag: v${{ env.VERSION_NAME }}
+          overwrite: true
+          body: "Release ${{ env.VERSION_NAME }}"
+
+      - name: Upload version JSON to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: w3coachtab.json
+          asset_name: w3coachtab.json
+          tag: v${{ env.VERSION_NAME }}
+          overwrite: true

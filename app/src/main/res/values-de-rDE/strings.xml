@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">W3Coach Tab</string>
+
+    <!-- Menu -->
+    <string name="menu_zoom">Zoom</string>
+    <string name="menu_autoupdate">Auto-Update</string>
+    <string name="menu_switch_url">URL wechseln</string>
+    <string name="menu_about">Info</string>
+    <string name="menu_system">System &#x1F512;</string>
+    <string name="menu_url1">URL 1</string>
+    <string name="menu_url2">URL 2</string>
+    <string name="menu_url3">URL 3</string>
+    <string name="menu_autologin">Auto-Login</string>
+    <string name="menu_marquee">Bildschirmschoner</string>
+    <string name="menu_app_shortcuts">App-Shortcuts</string>
+    <string name="menu_app1">App 1</string>
+    <string name="menu_app2">App 2</string>
+    <string name="menu_app_label">Bezeichnung</string>
+    <string name="menu_app_package">Paketname</string>
+    <string name="menu_check_update">Jetzt auf Update prüfen</string>
+    <string name="menu_settings">Systemeinstellungen</string>
+    <string name="menu_reboot">Neustart</string>
+
+    <!-- WireGuard -->
+    <string name="wg_connect">Quicksupport verbinden</string>
+    <string name="wg_disconnect">Quicksupport trennen</string>
+    <string name="wg_configure">VPN konfigurieren</string>
+
+    <!-- AutoLogin -->
+    <string name="autologin_enable">Auto-Login aktivieren</string>
+    <string name="autologin_user">Benutzername</string>
+    <string name="autologin_pass">Passwort</string>
+    <string name="autologin_click">Login-Button automatisch klicken</string>
+    <string name="autologin_saved">Auto-Login gespeichert</string>
+
+    <!-- Marquee -->
+    <string name="marquee_off">Aus</string>
+
+    <!-- Auto-Update -->
+    <string name="dlg_autoupdate_title">Auto-Update</string>
+    <string name="dlg_autoupdate_interval">Intervall (Stunden)</string>
+    <string name="update_reboot_title">Neustart nach Update</string>
+    <string name="update_reboot_now">Sofort</string>
+    <string name="update_reboot_scheduled">Geplant</string>
+    <string name="update_reboot_time">Neustartzeit (HH:MM)</string>
+    <string name="update_available">Update verfügbar</string>
+    <string name="update_none">Kein Update verfügbar</string>
+    <string name="update_installing">Update wird installiert…</string>
+
+    <!-- About -->
+    <string name="about_version">Version</string>
+    <string name="about_device">Gerät</string>
+    <string name="about_ip">Lokale IP</string>
+    <string name="about_vpn_ip">VPN-IP</string>
+
+    <string name="menu_usb_lock">USB-Speicher sperren 🔒</string>
+    <string name="menu_usb_unlock">USB-Speicher freigeben 🔓</string>
+    <string name="usb_locked">USB-Speicher gesperrt</string>
+    <string name="usb_unlocked">USB-Speicher freigegeben</string>
+    <string name="usb_no_owner">Nicht verfügbar (kein Device Owner)</string>
+
+    <!-- General -->
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="yes">Ja</string>
+    <string name="saved">Gespeichert</string>
+    <string name="no_network">Keine Netzwerkverbindung</string>
+    <string name="reboot_confirm">Gerät jetzt neu starten?</string>
+    <string name="app_not_configured">App nicht konfiguriert</string>
+    <string name="app_not_found">App nicht gefunden</string>
+    <string name="pin_enter">PIN eingeben</string>
+    <string name="pin_title">PIN</string>
+    <string name="pin_ok">OK</string>
+    <string name="pin_wrong">Falscher PIN</string>
+</resources>

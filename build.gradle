@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.13.2'
+    }
+}
+
+ext {
+    verCode = 2
+    verName = "1.0.2"
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete layout.buildDirectory
+}

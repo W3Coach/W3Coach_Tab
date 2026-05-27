@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.w3coach.w3coachtab'
+    compileSdkVersion 36
+
+    defaultConfig {
+        applicationId "com.w3coach.w3coachtab"
+        minSdkVersion 29
+        targetSdkVersion 36
+        versionCode rootProject.ext.verCode
+        versionName rootProject.ext.verName
+
+        def menuPin   = MENU_PIN
+        def urlPrefix = URL_PREFIX
+        def updateUrl = UPDATE_URL
+
+        buildConfigField 'String', "MENU_PIN",   menuPin
+        buildConfigField 'String', "URL_PREFIX", urlPrefix
+        buildConfigField 'String', "UPDATE_URL", updateUrl
+    }
+
+    signingConfigs {
+        release {
+            keyAlias     KEY_ALIAS
+            keyPassword  KEY_PASSWORD
+            storeFile    file(STORE_FILE)
+            storePassword STORE_PASSWORD
+        }
+    }
+    android.buildFeatures.buildConfig = true
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'com.wireguard.android:tunnel:1.0.20260102'
+    implementation 'androidx.preference:preference:1.2.1'
+}
