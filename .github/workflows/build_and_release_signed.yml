@@ -35,17 +35,6 @@ jobs:
           mkdir -p $HOME/.gradle
           cp keystore/gradle.properties $HOME/.gradle/gradle.properties
 
-      - name: Download Gradle Wrapper JAR
-        run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties \
-            | sed 's/.*gradle-\(.*\)-bin\.zip.*/\1/')
-          echo "Gradle version: $GRADLE_VERSION"
-          mkdir -p gradle/wrapper
-          curl -fsSL \
-            "https://raw.githubusercontent.com/gradle/gradle/v${GRADLE_VERSION}/gradle/wrapper/gradle-wrapper.jar" \
-            -o gradle/wrapper/gradle-wrapper.jar
-          echo "JAR size: $(wc -c < gradle/wrapper/gradle-wrapper.jar) bytes"
-
       - name: Set execution flag for gradlew
         run: chmod +x gradlew
 
@@ -112,7 +101,6 @@ jobs:
       - name: Find APK path
         run: |
           apkPath=$(find . -path "*/apk/release/*.apk" -o -name "w3coachtab-*.apk" | head -1)
-          # Fallback: any apk except in assets
           if [ -z "$apkPath" ]; then
             apkPath=$(find . -name "*.apk" -not -path "*/assets/*" -type f | head -1)
           fi
