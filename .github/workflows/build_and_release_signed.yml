@@ -35,6 +35,17 @@ jobs:
           mkdir -p $HOME/.gradle
           cp keystore/gradle.properties $HOME/.gradle/gradle.properties
 
+      - name: Download Gradle Wrapper JAR
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties \
+            | sed 's/.*gradle-\(.*\)-bin\.zip.*/\1/')
+          echo "Gradle version: $GRADLE_VERSION"
+          mkdir -p gradle/wrapper
+          curl -fsSL \
+            "https://raw.githubusercontent.com/gradle/gradle/v${GRADLE_VERSION}/gradle/wrapper/gradle-wrapper.jar" \
+            -o gradle/wrapper/gradle-wrapper.jar
+          echo "JAR size: $(wc -c < gradle/wrapper/gradle-wrapper.jar) bytes"
+
       - name: Set execution flag for gradlew
         run: chmod +x gradlew
 

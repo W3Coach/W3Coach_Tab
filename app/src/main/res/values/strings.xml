@@ -71,6 +71,6 @@
     <string name="app_not_found">App not found</string>
     <string name="pin_enter">Enter PIN</string>
     <string name="pin_title">PIN</string>
-    <string name="pin_ok">OK</string>
+    <string name="pin_ok">PIN OK</string>
     <string name="pin_wrong">Wrong PIN</string>
 </resources>
