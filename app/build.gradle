@@ -13,7 +13,7 @@ android {
 
         def menuPin   = MENU_PIN
         def urlPrefix = URL_PREFIX
-        def updateUrl = UPDATE_URL
+        def updateUrl = W3COACHTAB_UPDATE_URL
 
         buildConfigField 'String', "MENU_PIN",   menuPin
         buildConfigField 'String', "URL_PREFIX", urlPrefix
