@@ -43,12 +43,6 @@ public class TabMenu {
         java.util.List<String> itemList = new java.util.ArrayList<>();
         java.util.List<Runnable> actionList = new java.util.ArrayList<>();
 
-        itemList.add(activity.getString(R.string.menu_zoom));
-        actionList.add(this::showZoom);
-
-        itemList.add(activity.getString(R.string.menu_autoupdate));
-        actionList.add(this::showAutoUpdate);
-
         itemList.add(activity.getString(R.string.menu_switch_url));
         actionList.add(() -> ((MainActivity) activity).switchUrl());
 

@@ -82,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
         // Marquee Overlay
         marqueeOverlay = new MarqueeOverlay(this, () -> hideMarquee());
         marqueeOverlay.setVisibility(View.GONE);
-        root.addView(marqueeOverlay, new FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams marqueeLp = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        marqueeLp.gravity = android.view.Gravity.BOTTOM;
+        root.addView(marqueeOverlay, marqueeLp);
 
         // Floating Action Button
         FloatingActionButton fab = new FloatingActionButton(this);
@@ -104,6 +106,14 @@ public class MainActivity extends AppCompatActivity {
 
         tabMenu = new TabMenu(this, kioskWeb, prefs);
         fab.setOnClickListener(v -> tabMenu.show());
+        fab.setOnLongClickListener(v -> {
+            String url1 = prefs.url1();
+            if (!url1.isEmpty()) {
+                currentUrl = 1;
+                kioskWeb.loadUrl(url1);
+            }
+            return true;
+        });
 
         // Kiosk-Modus
         initKioskMode();
