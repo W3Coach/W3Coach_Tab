@@ -97,7 +97,7 @@ public class GithubUpdateChecker {
                 }
             }
         } catch (Exception e) { Log.w(TAG, "versionCode-Parse: " + e.getMessage()); }
-        return fallback + 1;
+        return fallback;
     }
 
     private static String findApkUrl(JSONObject release) {
