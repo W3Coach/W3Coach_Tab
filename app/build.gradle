@@ -22,9 +22,15 @@ android {
 
     signingConfigs {
         release {
-            keyAlias     KEY_ALIAS
-            keyPassword  KEY_PASSWORD
-            storeFile    file(STORE_FILE)
+            keyAlias      KEY_ALIAS
+            keyPassword   KEY_PASSWORD
+            storeFile     file(STORE_FILE)
+            storePassword STORE_PASSWORD
+        }
+        debug {
+            keyAlias      KEY_ALIAS
+            keyPassword   KEY_PASSWORD
+            storeFile     file(STORE_FILE)
             storePassword STORE_PASSWORD
         }
     }
@@ -34,6 +40,9 @@ android {
         release {
             minifyEnabled false
             signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 

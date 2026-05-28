@@ -88,8 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Floating Action Button
         FloatingActionButton fab = new FloatingActionButton(this);
-        fab.setImageResource(android.R.drawable.ic_menu_more);
-        fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF0B615E));
+        fab.setImageResource(R.drawable.ic_fab_logo);
+        // Vollständig transparenter Hintergrund – Logo schwebt unsichtbar über der WebView
+        fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
+        fab.setElevation(0f);
+        fab.setCompatElevation(0f);
+        // Kein Ripple-Effekt
+        fab.setRippleColor(android.graphics.Color.TRANSPARENT);
         FrameLayout.LayoutParams fabParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
