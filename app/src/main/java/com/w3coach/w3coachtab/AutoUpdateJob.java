@@ -7,7 +7,7 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -22,9 +22,6 @@ public class AutoUpdateJob extends JobService {
     public  static final String PREF_INTERVAL_HOURS   = "updateIntervalHours";
     public  static final int    DEFAULT_INTERVAL_HOURS = 4;
     public  static final int    MIN_INTERVAL_HOURS     = 1;
-
-    private static final String GITHUB_API_URL =
-            "https://api.github.com/repos/w3coach/W3Coach_TV/releases/latest";
 
     private ExecutorService executor;
 
@@ -105,7 +102,7 @@ public class AutoUpdateJob extends JobService {
 
         try {
             GithubUpdateChecker.UpdateInfo info =
-                    GithubUpdateChecker.checkForUpdate(GITHUB_API_URL, BuildConfig.VERSION_CODE);
+                    GithubUpdateChecker.checkForUpdate(BuildConfig.UPDATE_URL, BuildConfig.VERSION_CODE);
 
             if (info == null) { Log.i(TAG, "Aktuell"); jobFinished(params, false); return; }
 
