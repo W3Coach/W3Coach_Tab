@@ -68,6 +68,11 @@ public class GithubUpdateChecker {
     private static String fetchString(String apiUrl) throws IOException {
         HttpURLConnection conn = openConnection(new URL(apiUrl));
         conn.setRequestProperty("Accept", "application/vnd.github+json");
+        int httpCode = conn.getResponseCode();
+        if (httpCode == 403) throw new IOException("GitHub API Rate Limit erreicht (HTTP 403)");
+        if (httpCode == 404) throw new IOException("Release nicht gefunden (HTTP 404)");
+        if (httpCode < 200 || httpCode >= 300)
+            throw new IOException("HTTP-Fehler " + httpCode);
         try (BufferedReader r = new BufferedReader(
                 new InputStreamReader(conn.getInputStream()))) {
             StringBuilder sb = new StringBuilder();
