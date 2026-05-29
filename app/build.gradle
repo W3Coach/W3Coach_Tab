@@ -34,10 +34,7 @@ android {
             storePassword STORE_PASSWORD
         }
     }
-
-    buildFeatures {
-        buildConfig true
-    }
+    android.buildFeatures.buildConfig = true
 
     buildTypes {
         release {
@@ -47,6 +44,10 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     compileOptions {

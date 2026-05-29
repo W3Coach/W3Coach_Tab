@@ -10,7 +10,7 @@ buildscript {
 
 ext {
     verCode = 3
-    verName = "1.0.0"
+    verName = "1.0.1"
 }
 
 allprojects {
