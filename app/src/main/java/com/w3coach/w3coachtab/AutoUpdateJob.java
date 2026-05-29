@@ -109,16 +109,21 @@ public class AutoUpdateJob extends JobService {
             File apk = new File(ctx.getCacheDir(), "w3coachtab_update.apk");
             if (apk.exists()) apk.delete();
             GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
+
+            // Callback: nach erfolgreicher Installation Neustart auslösen
+            Prefs appPrefs = new Prefs(ctx);
+            InstallResultReceiver.postInstallPackage  = ctx.getPackageName();
+            InstallResultReceiver.postInstallCallback = () -> {
+                if (appPrefs.updateRebootNow()) {
+                    scheduleReboot(ctx, 0);
+                } else {
+                    scheduleReboot(ctx, getDelayMillis(appPrefs.updateRebootTime()));
+                }
+            };
+
             SilentInstaller.install(ctx, apk);
             apk.deleteOnExit();
 
-            // Neustart nach Installation
-            Prefs appPrefs = new Prefs(ctx);
-            if (appPrefs.updateRebootNow()) {
-                scheduleReboot(ctx, 0);
-            } else {
-                scheduleReboot(ctx, getDelayMillis(appPrefs.updateRebootTime()));
-            }
             jobFinished(params, false);
         } catch (Exception e) {
             Log.e(TAG, "Update-Fehler: " + e.getMessage(), e);

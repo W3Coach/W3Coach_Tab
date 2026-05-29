@@ -63,9 +63,9 @@
 
         <receiver
             android:name=".InstallResultReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.content.pm.action.SESSION_COMMITTED" />
+                <action android:name="com.w3coach.w3coachtab.INSTALL_COMPLETE" />
             </intent-filter>
         </receiver>
 
