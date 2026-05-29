@@ -63,7 +63,7 @@ public class AutoUpdateJob extends JobService {
         return true;
     }
 
-    private void scheduleReboot(Context ctx, long delayMs) {
+    public static void scheduleReboot(Context ctx, long delayMs) {
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             android.app.admin.DevicePolicyManager dpm =
                     (android.app.admin.DevicePolicyManager)
@@ -76,7 +76,7 @@ public class AutoUpdateJob extends JobService {
         }, delayMs);
     }
 
-    private long getDelayMillis(String time) {
+    public static long getDelayMillis(String time) {
         try {
             String[] parts = time.split(":");
             int hour   = Integer.parseInt(parts[0]);

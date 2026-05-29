@@ -461,27 +461,36 @@ public class TabMenu {
     private void installUpdateNow(UpdateInfo info) {
         ToastHelper.info(activity, activity.getString(R.string.update_installing));
 
-        // Callback: nach erfolgreicher Installation Gerät neu starten
-        InstallResultReceiver.postInstallPackage  = activity.getPackageName();
-        InstallResultReceiver.postInstallCallback = () -> {
-            android.app.admin.DevicePolicyManager dpm =
-                    (android.app.admin.DevicePolicyManager)
-                    activity.getSystemService(Context.DEVICE_POLICY_SERVICE);
-            android.content.ComponentName admin =
-                    new android.content.ComponentName(activity, KioskAdminReceiver.class);
-            if (dpm != null && dpm.isDeviceOwnerApp(activity.getPackageName())) {
-                dpm.reboot(admin);
-            }
-        };
+        android.app.admin.DevicePolicyManager dpm =
+                (android.app.admin.DevicePolicyManager)
+                activity.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        android.content.ComponentName admin =
+                new android.content.ComponentName(activity, KioskAdminReceiver.class);
 
         new Thread(() -> {
             try {
                 java.io.File apk = new java.io.File(activity.getCacheDir(), "w3coachtab_update.apk");
                 GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
                 SilentInstaller.install(activity, apk);
+
+                if (prefs.updateRebootNow()) {
+                    // Sofortiger Neustart: Toast anzeigen, 15 Sekunden warten
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            ToastHelper.info(activity,
+                                    activity.getString(R.string.reboot_countdown, 15)));
+                    Thread.sleep(15000);
+                    if (dpm != null && dpm.isDeviceOwnerApp(activity.getPackageName())) {
+                        dpm.reboot(admin);
+                    }
+                } else {
+                    // Geplanter Neustart: Toast mit Uhrzeit anzeigen
+                    String rebootTime = prefs.updateRebootTime();
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            ToastHelper.info(activity,
+                                    activity.getString(R.string.reboot_scheduled, rebootTime)));
+                    AutoUpdateJob.scheduleReboot(activity, AutoUpdateJob.getDelayMillis(rebootTime));
+                }
             } catch (Exception e) {
-                InstallResultReceiver.postInstallCallback = null;
-                InstallResultReceiver.postInstallPackage  = null;
                 new Handler(Looper.getMainLooper()).post(() ->
                         ToastHelper.error(activity, "Update fehlgeschlagen: " + e.getMessage()));
             }

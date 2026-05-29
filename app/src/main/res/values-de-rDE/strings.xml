@@ -60,6 +60,9 @@
     <string name="usb_unlocked">USB-Speicher freigegeben</string>
     <string name="usb_no_owner">Nicht verfügbar (kein Device Owner)</string>
 
+    <string name="reboot_countdown">Neustart in %1$d Sekunden…</string>
+    <string name="reboot_scheduled">Update installiert. Neustart um %1$s</string>
+
     <!-- General -->
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>

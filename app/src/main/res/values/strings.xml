@@ -60,6 +60,9 @@
     <string name="usb_unlocked">USB storage unlocked</string>
     <string name="usb_no_owner">Not available (no Device Owner)</string>
 
+    <string name="reboot_countdown">Restarting in %1$d seconds…</string>
+    <string name="reboot_scheduled">Update installed. Restarting at %1$s</string>
+
     <!-- General -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
