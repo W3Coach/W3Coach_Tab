@@ -87,6 +87,14 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <receiver
+            android:name=".RebootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.w3coach.w3coachtab.REBOOT" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
