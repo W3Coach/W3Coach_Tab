@@ -43,7 +43,7 @@
     <string name="update_reboot_title">Neustart nach Update</string>
     <string name="update_reboot_now">Sofort</string>
     <string name="update_reboot_scheduled">Geplant</string>
-    <string name="update_reboot_time">Neustartzeit (HH:MM)</string>
+    <string name="update_reboot_time">Neustart um (HH:MM)</string>
     <string name="update_available">Update verfügbar</string>
     <string name="update_none">Kein Update verfügbar</string>
     <string name="update_installing">Update wird installiert…</string>
