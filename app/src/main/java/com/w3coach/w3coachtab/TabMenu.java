@@ -466,16 +466,12 @@ public class TabMenu {
                 java.io.File apk = new java.io.File(activity.getCacheDir(), "w3coachtab_update.apk");
                 GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
 
-                // Reboot VOR der Installation planen – der App-Prozess wird
-                // durch die Installation beendet, daher muss der Alarm vorher gesetzt sein
+                // Reboot VOR der Installation planen
                 if (prefs.updateRebootNow()) {
-                    // Sofortiger Neustart: 20 Sekunden nach jetzt
                     RebootReceiver.schedule(activity, 20000);
-                    new Handler(Looper.getMainLooper()).post(() ->
-                            ToastHelper.info(activity,
-                                    activity.getString(R.string.reboot_countdown, 20)));
+                    // Countdown-Overlay anzeigen das bis zum Neustart sichtbar bleibt
+                    new Handler(Looper.getMainLooper()).post(() -> showRebootCountdown(20));
                 } else {
-                    // Geplanter Neustart zur konfigurierten Uhrzeit
                     long delayMs = AutoUpdateJob.getDelayMillis(prefs.updateRebootTime());
                     RebootReceiver.schedule(activity, delayMs);
                     new Handler(Looper.getMainLooper()).post(() ->
@@ -491,6 +487,40 @@ public class TabMenu {
                         ToastHelper.error(activity, "Update fehlgeschlagen: " + e.getMessage()));
             }
         }).start();
+    }
+
+    private void showRebootCountdown(int seconds) {
+        // Vollbild-Overlay mit Countdown
+        android.widget.FrameLayout overlay = new android.widget.FrameLayout(activity);
+        overlay.setBackgroundColor(0xDD0B615E);
+
+        android.widget.TextView tv = new android.widget.TextView(activity);
+        tv.setTextColor(0xFFFFFFFF);
+        tv.setTextSize(32f);
+        tv.setGravity(android.view.Gravity.CENTER);
+        tv.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT);
+        overlay.addView(tv, lp);
+
+        // Overlay über WebView legen
+        android.widget.FrameLayout root = activity.findViewById(android.R.id.content);
+        root.addView(overlay);
+
+        // Countdown-Handler
+        Handler handler = new Handler(Looper.getMainLooper());
+        final int[] remaining = {seconds};
+        Runnable tick = new Runnable() {
+            @Override public void run() {
+                if (remaining[0] <= 0) return;
+                tv.setText(activity.getString(R.string.reboot_countdown, remaining[0]));
+                remaining[0]--;
+                handler.postDelayed(this, 1000);
+            }
+        };
+        handler.post(tick);
     }
 
     // ── USB-Speicher-Sperre ───────────────────────────────────────────────────

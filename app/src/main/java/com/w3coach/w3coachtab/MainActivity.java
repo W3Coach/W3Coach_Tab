@@ -289,6 +289,16 @@ public class MainActivity extends AppCompatActivity {
                 dpm.clearUserRestriction(admin, android.os.UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA);
             }
 
+            // Als Default-Launcher setzen damit nach Neustart kein Launcher-Dialog erscheint
+            try {
+                android.content.IntentFilter filter = new android.content.IntentFilter(Intent.ACTION_MAIN);
+                filter.addCategory(Intent.CATEGORY_HOME);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                ComponentName activity = new ComponentName(getPackageName(),
+                        MainActivity.class.getName());
+                dpm.addPersistentPreferredActivity(admin, filter, activity);
+            } catch (Exception ignored) {}
+
             // Display dauerhaft an (wie "Keep Display on")
             try {
                 Settings.Global.putInt(getContentResolver(),
