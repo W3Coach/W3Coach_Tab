@@ -466,11 +466,13 @@ public class TabMenu {
                 java.io.File apk = new java.io.File(activity.getCacheDir(), "w3coachtab_update.apk");
                 GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
 
-                // Reboot VOR der Installation planen
                 if (prefs.updateRebootNow()) {
+                    // Alarm setzen
                     RebootReceiver.schedule(activity, 20000);
-                    // Countdown-Overlay anzeigen das bis zum Neustart sichtbar bleibt
+                    // Countdown-Overlay anzeigen
                     new Handler(Looper.getMainLooper()).post(() -> showRebootCountdown(20));
+                    // 20 Sekunden warten – Overlay bleibt sichtbar
+                    Thread.sleep(20000);
                 } else {
                     long delayMs = AutoUpdateJob.getDelayMillis(prefs.updateRebootTime());
                     RebootReceiver.schedule(activity, delayMs);
@@ -480,6 +482,7 @@ public class TabMenu {
                                             prefs.updateRebootTime())));
                 }
 
+                // Installation NACH dem Countdown
                 SilentInstaller.install(activity, apk);
 
             } catch (Exception e) {

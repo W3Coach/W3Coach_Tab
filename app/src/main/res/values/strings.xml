@@ -54,10 +54,10 @@
     <string name="about_ip">Local IP</string>
     <string name="about_vpn_ip">VPN IP</string>
 
-    <string name="menu_usb_lock">Lock USB storage</string>
-    <string name="menu_usb_unlock">Unlock USB storage</string>
-    <string name="usb_locked">USB storage locked 🔒</string>
-    <string name="usb_unlocked">USB storage unlocked 🔓</string>
+    <string name="menu_usb_lock">Lock USB storage 🔒</string>
+    <string name="menu_usb_unlock">Unlock USB storage 🔓</string>
+    <string name="usb_locked">USB storage locked</string>
+    <string name="usb_unlocked">USB storage unlocked</string>
     <string name="usb_no_owner">Not available (no Device Owner)</string>
 
     <string name="reboot_countdown">Restarting in %1$d seconds…</string>

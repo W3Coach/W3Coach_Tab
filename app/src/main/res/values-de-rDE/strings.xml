@@ -54,10 +54,10 @@
     <string name="about_ip">Lokale IP</string>
     <string name="about_vpn_ip">VPN-IP</string>
 
-    <string name="menu_usb_lock">USB-Speicher sperren</string>
-    <string name="menu_usb_unlock">USB-Speicher freigeben</string>
-    <string name="usb_locked">USB-Speicher gesperrt 🔒</string>
-    <string name="usb_unlocked">USB-Speicher freigegeben 🔓</string>
+    <string name="menu_usb_lock">USB-Speicher sperren 🔒</string>
+    <string name="menu_usb_unlock">USB-Speicher freigeben 🔓</string>
+    <string name="usb_locked">USB-Speicher gesperrt</string>
+    <string name="usb_unlocked">USB-Speicher freigegeben</string>
     <string name="usb_no_owner">Nicht verfügbar (kein Device Owner)</string>
 
     <string name="reboot_countdown">Neustart in %1$d Sekunden…</string>
