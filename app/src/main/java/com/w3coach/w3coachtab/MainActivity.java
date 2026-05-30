@@ -291,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Als Default-Launcher setzen damit nach Neustart kein Launcher-Dialog erscheint
             try {
-                android.content.IntentFilter filter = new android.content.IntentFilter(Intent.ACTION_MAIN);
-                filter.addCategory(Intent.CATEGORY_HOME);
-                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                android.content.IntentFilter filter = new android.content.IntentFilter(android.content.Intent.ACTION_MAIN);
+                filter.addCategory(android.content.Intent.CATEGORY_HOME);
+                filter.addCategory(android.content.Intent.CATEGORY_DEFAULT);
                 ComponentName activity = new ComponentName(getPackageName(),
                         MainActivity.class.getName());
                 dpm.addPersistentPreferredActivity(admin, filter, activity);
