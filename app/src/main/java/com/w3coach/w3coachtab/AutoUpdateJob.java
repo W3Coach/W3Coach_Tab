@@ -110,16 +110,13 @@ public class AutoUpdateJob extends JobService {
             if (apk.exists()) apk.delete();
             GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
 
-            // Callback: nach erfolgreicher Installation Neustart auslösen
+            // Reboot VOR der Installation planen – Prozess wird durch Installation beendet
             Prefs appPrefs = new Prefs(ctx);
-            InstallResultReceiver.postInstallPackage  = ctx.getPackageName();
-            InstallResultReceiver.postInstallCallback = () -> {
-                if (appPrefs.updateRebootNow()) {
-                    scheduleReboot(ctx, 0);
-                } else {
-                    scheduleReboot(ctx, getDelayMillis(appPrefs.updateRebootTime()));
-                }
-            };
+            if (appPrefs.updateRebootNow()) {
+                RebootReceiver.schedule(ctx, 20000);
+            } else {
+                RebootReceiver.schedule(ctx, getDelayMillis(appPrefs.updateRebootTime()));
+            }
 
             SilentInstaller.install(ctx, apk);
             apk.deleteOnExit();
