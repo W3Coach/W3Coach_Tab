@@ -76,6 +76,8 @@
 
     <string name="menu_back">← Back</string>
 
+    <string name="update_daily_reboot">Daily reboot time (HH:MM, empty = none)</string>
+
     <!-- General -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>

@@ -100,15 +100,6 @@ public class AutoUpdateJob extends JobService {
             if (apk.exists()) apk.delete();
             GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
 
-            // Reboot VOR der Installation planen – Prozess wird durch Installation beendet
-            Prefs appPrefs = new Prefs(ctx);
-            appPrefs.setLastUpdateTimestamp(System.currentTimeMillis());
-            if (appPrefs.updateRebootNow()) {
-                RebootReceiver.schedule(ctx, 20000);
-            } else {
-                RebootReceiver.schedule(ctx, getDelayMillis(appPrefs.updateRebootTime()));
-            }
-
             // Job neu planen bevor Installation den Prozess beendet
             schedule(ctx);
 

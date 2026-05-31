@@ -76,6 +76,8 @@
 
     <string name="menu_back">← Zurück</string>
 
+    <string name="update_daily_reboot">Tägliche Neustartzeit (HH:MM, leer = kein Neustart)</string>
+
     <!-- General -->
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>

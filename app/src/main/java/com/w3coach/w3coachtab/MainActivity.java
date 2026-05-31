@@ -106,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
         tabMenu = new TabMenu(this, kioskWeb, prefs);
         fab.setOnClickListener(v -> tabMenu.show());
+
+        // Täglichen Neustart planen falls konfiguriert
+        tabMenu.scheduleDailyReboot();
         fab.setOnLongClickListener(v -> {
             String url1 = prefs.url1();
             if (!url1.isEmpty()) {
@@ -281,6 +284,14 @@ public class MainActivity extends AppCompatActivity {
             dpm.setKeyguardDisabledFeatures(admin,
                     DevicePolicyManager.KEYGUARD_DISABLE_FEATURES_ALL);
             dpm.setMaximumTimeToLock(admin, 0);
+
+            // Automatische Zeitsynchronisation per NTP aktivieren
+            try {
+                android.provider.Settings.Global.putInt(getContentResolver(),
+                        android.provider.Settings.Global.AUTO_TIME, 1);
+                android.provider.Settings.Global.putInt(getContentResolver(),
+                        android.provider.Settings.Global.AUTO_TIME_ZONE, 1);
+            } catch (Exception ignored) {}
 
             // USB-Speicher-Sperre gemaess gespeicherter Einstellung
             if (prefs.usbRestricted()) {

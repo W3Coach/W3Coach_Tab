@@ -476,30 +476,17 @@ public class TabMenu {
         etInterval.setSingleLine(true);
         layout.addView(etInterval);
 
-        TextView tvReboot = new TextView(activity);
-        tvReboot.setText(R.string.update_reboot_title);
-        tvReboot.setPadding(0, 16, 0, 0);
-        layout.addView(tvReboot);
-
-        CheckBox cbRebootNow = new CheckBox(activity);
-        cbRebootNow.setText(R.string.update_reboot_now);
-        cbRebootNow.setChecked(prefs.updateRebootNow());
-        layout.addView(cbRebootNow);
-
         TextView tvRebootTime = new TextView(activity);
-        tvRebootTime.setText(R.string.update_reboot_time);
-        tvRebootTime.setPadding(0, 8, 0, 0);
+        tvRebootTime.setText(R.string.update_daily_reboot);
+        tvRebootTime.setPadding(0, 16, 0, 0);
         layout.addView(tvRebootTime);
 
         EditText etRebootTime = new EditText(activity);
         etRebootTime.setInputType(InputType.TYPE_CLASS_TEXT);
         etRebootTime.setText(prefs.updateRebootTime());
         etRebootTime.setSingleLine(true);
-        etRebootTime.setEnabled(!prefs.updateRebootNow());
+        etRebootTime.setHint("HH:MM (leer = kein Neustart)");
         layout.addView(etRebootTime);
-
-        cbRebootNow.setOnCheckedChangeListener((btn, checked) ->
-                etRebootTime.setEnabled(!checked));
 
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.dlg_autoupdate_title)
@@ -513,12 +500,22 @@ public class TabMenu {
                     } catch (NumberFormatException ignored) {}
                     prefs.setAutoUpdate(enabled);
                     prefs.setUpdateInterval(interval);
-                    prefs.setUpdateRebootNow(cbRebootNow.isChecked());
                     prefs.setUpdateRebootTime(etRebootTime.getText().toString().trim());
                     AutoUpdateJob.schedule(activity);
+                    // Täglichen Neustart planen falls Uhrzeit gesetzt
+                    scheduleDailyReboot();
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
+    }
+
+    // ── Täglicher Neustart ────────────────────────────────────────────────────
+
+    public void scheduleDailyReboot() {
+        String rebootTime = prefs.updateRebootTime();
+        if (rebootTime == null || rebootTime.isEmpty()) return;
+        long delayMs = AutoUpdateJob.getDelayMillis(rebootTime);
+        if (delayMs > 0) RebootReceiver.schedule(activity, delayMs);
     }
 
     // ── Manueller Update-Check ────────────────────────────────────────────────
@@ -582,71 +579,18 @@ public class TabMenu {
 
     private void installUpdateNow(UpdateInfo info) {
         ToastHelper.info(activity, activity.getString(R.string.update_installing));
+        prefs.setLastUpdateTimestamp(System.currentTimeMillis());
 
         new Thread(() -> {
             try {
                 java.io.File apk = new java.io.File(activity.getCacheDir(), "w3coachtab_update.apk");
                 GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
-
-                if (prefs.updateRebootNow()) {
-                    // Timestamp speichern
-                    prefs.setLastUpdateTimestamp(System.currentTimeMillis());
-                    RebootReceiver.schedule(activity, 20000);
-                    // Countdown-Overlay anzeigen
-                    new Handler(Looper.getMainLooper()).post(() -> showRebootCountdown(20));
-                    // 20 Sekunden warten – Overlay bleibt sichtbar
-                    Thread.sleep(20000);
-                } else {
-                    long delayMs = AutoUpdateJob.getDelayMillis(prefs.updateRebootTime());
-                    RebootReceiver.schedule(activity, delayMs);
-                    new Handler(Looper.getMainLooper()).post(() ->
-                            ToastHelper.info(activity,
-                                    activity.getString(R.string.reboot_scheduled,
-                                            prefs.updateRebootTime())));
-                }
-
-                // Installation NACH dem Countdown
                 SilentInstaller.install(activity, apk);
-
             } catch (Exception e) {
                 new Handler(Looper.getMainLooper()).post(() ->
                         ToastHelper.error(activity, "Update fehlgeschlagen: " + e.getMessage()));
             }
         }).start();
-    }
-
-    private void showRebootCountdown(int seconds) {
-        // Vollbild-Overlay mit Countdown
-        android.widget.FrameLayout overlay = new android.widget.FrameLayout(activity);
-        overlay.setBackgroundColor(0xDD0B615E);
-
-        android.widget.TextView tv = new android.widget.TextView(activity);
-        tv.setTextColor(0xFFFFFFFF);
-        tv.setTextSize(32f);
-        tv.setGravity(android.view.Gravity.CENTER);
-        tv.setTypeface(null, android.graphics.Typeface.BOLD);
-
-        android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT);
-        overlay.addView(tv, lp);
-
-        // Overlay über WebView legen
-        android.widget.FrameLayout root = activity.findViewById(android.R.id.content);
-        root.addView(overlay);
-
-        // Countdown-Handler
-        Handler handler = new Handler(Looper.getMainLooper());
-        final int[] remaining = {seconds};
-        Runnable tick = new Runnable() {
-            @Override public void run() {
-                if (remaining[0] <= 0) return;
-                tv.setText(activity.getString(R.string.reboot_countdown, remaining[0]));
-                remaining[0]--;
-                handler.postDelayed(this, 1000);
-            }
-        };
-        handler.post(tick);
     }
 
     // ── USB-Speicher-Sperre ───────────────────────────────────────────────────
