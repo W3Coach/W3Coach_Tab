@@ -81,6 +81,14 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
+            android:name=".AutoUpdateReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.w3coach.w3coachtab.AUTO_UPDATE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".RebootReceiver"
             android:exported="false">
             <intent-filter>

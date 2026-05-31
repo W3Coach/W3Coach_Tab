@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Täglichen Neustart planen falls konfiguriert
         tabMenu.scheduleDailyReboot();
+        AutoUpdateReceiver.schedule(this);
         fab.setOnLongClickListener(v -> {
             String url1 = prefs.url1();
             if (!url1.isEmpty()) {

@@ -502,7 +502,7 @@ public class TabMenu {
                     prefs.setAutoUpdate(enabled);
                     prefs.setUpdateInterval(interval);
                     prefs.setUpdateRebootTime(etRebootTime.getText().toString().trim());
-                    AutoUpdateJob.schedule(activity);
+                    AutoUpdateReceiver.schedule(activity);
                     // Täglichen Neustart planen falls Uhrzeit gesetzt
                     scheduleDailyReboot();
                 })

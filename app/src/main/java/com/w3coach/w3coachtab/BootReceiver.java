@@ -26,7 +26,7 @@ public class BootReceiver extends BroadcastReceiver {
         context.startActivity(launch);
 
         // Auto-Update Job planen
-        AutoUpdateJob.schedule(context);
+        AutoUpdateReceiver.schedule(context);
     }
 
     private void disableSetupWizard(Context context) {
