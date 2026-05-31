@@ -523,6 +523,32 @@ public class TabMenu {
 
     // ── Manueller Update-Check ────────────────────────────────────────────────
 
+    // ── Alle Dialoge schließen ────────────────────────────────────────────────
+
+    private void closeAllDialogs() {
+        // Schließt alle offenen AlertDialogs der Activity
+        // damit der Countdown-Overlay sichtbar wird
+        try {
+            java.lang.reflect.Field f = activity.getClass()
+                    .getSuperclass().getDeclaredField("mFragments");
+            f.setAccessible(true);
+        } catch (Exception ignored) {}
+        // Einfachste zuverlässige Methode: onBackPressed simulieren
+        // bis keine Dialoge mehr offen sind – Android schließt immer
+        // den obersten Dialog zuerst
+        new Handler(Looper.getMainLooper()).post(() -> {
+            try { activity.onBackPressed(); } catch (Exception ignored) {}
+        });
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            try { activity.onBackPressed(); } catch (Exception ignored) {}
+        }, 100);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            try { activity.onBackPressed(); } catch (Exception ignored) {}
+        }, 200);
+    }
+
+    // ── Update-Check ──────────────────────────────────────────────────────────
+
     private void checkUpdateNow() {
         ToastHelper.info(activity, activity.getString(R.string.menu_check_update) + "…");
         new Thread(() -> {
@@ -537,7 +563,13 @@ public class TabMenu {
                     new AlertDialog.Builder(activity)
                             .setTitle(R.string.update_available)
                             .setMessage("Version " + info.tagName)
-                            .setPositiveButton(R.string.yes, (d, w) -> installUpdateNow(info))
+                            .setPositiveButton(R.string.yes, (d, w) -> {
+                                // Alle Dialoge schließen damit Countdown sichtbar ist
+                                d.dismiss();
+                                closeAllDialogs();
+                                new Handler(Looper.getMainLooper()).postDelayed(
+                                        () -> installUpdateNow(info), 300);
+                            })
                             .setNegativeButton(R.string.cancel, null)
                             .show();
                 });
