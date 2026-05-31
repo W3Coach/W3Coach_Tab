@@ -9,7 +9,7 @@ buildscript {
 }
 
 ext {
-    verCode = 21
+    verCode = 23
     verName = "0.9.21"
 }
 
