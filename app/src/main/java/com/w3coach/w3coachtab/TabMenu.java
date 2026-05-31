@@ -137,49 +137,30 @@ public class TabMenu {
             }
         };
 
-        final boolean[] openedSubmenu = {false};
-        final boolean[] submenuClosed = {false};
-
-        AlertDialog mainDialog = new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(activity)
                 .setTitle(R.string.menu_system)
                 .setAdapter(adapter, (dialog, which) -> {
                     resetAdminTimeout();
-                    openedSubmenu[0] = true;
-                    submenuClosed[0] = false;
                     dialog.dismiss();
-
-                    // Untermenü öffnen und danach Hauptmenü wieder anzeigen
-                    android.content.DialogInterface.OnDismissListener subDismiss = d -> {
-                        submenuClosed[0] = true;
-                        if (adminUnlocked &&
-                                (System.currentTimeMillis() - adminUnlockedAt) < ADMIN_TIMEOUT_MS) {
-                            openSystemMenu();
-                        }
-                    };
-
                     switch (which) {
-                        case 0: showWebMenu(subDismiss);      break;
-                        case 1: showDisplayMenu(subDismiss);  break;
-                        case 2: showSoftwareMenu(subDismiss); break;
-                        case 3: showUpdatesMenu(subDismiss);  break;
-                        case 4:
-                            wgManager.showConfigDialog();
-                            subDismiss.onDismiss(null);
-                            break;
+                        case 0: showWebMenu();           break;
+                        case 1: showDisplayMenu();       break;
+                        case 2: showSoftwareMenu();      break;
+                        case 3: showUpdatesMenu();       break;
+                        case 4: wgManager.showConfigDialog(); openSystemMenu(); break;
                         // case 5: Trennlinie
-                        case 6: toggleUsbRestriction();  subDismiss.onDismiss(null); break;
-                        case 7: confirmReboot();          break;
-                        case 8: openSystemSettings();     break;
+                        case 6: toggleUsbRestriction();  openSystemMenu(); break;
+                        case 7: confirmReboot();         break;
+                        case 8: openSystemSettings();    break;
                     }
                 })
                 .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
-                .create();
-        mainDialog.show();
+                .show();
     }
 
     // ── Web-Untermenü ─────────────────────────────────────────────────────────
 
-    private void showWebMenu(android.content.DialogInterface.OnDismissListener onDismiss) {
+    private void showWebMenu() {
         String[] items = {
             activity.getString(R.string.menu_url1) + "  " + truncate(prefs.url1()),
             activity.getString(R.string.menu_url2) + "  " + truncate(prefs.url2()),
@@ -199,14 +180,14 @@ public class TabMenu {
                         case 4: clearWebViewCache(); break;
                     }
                 })
-                .setOnDismissListener(onDismiss)
-                .setNegativeButton(R.string.close, null)
+                .setPositiveButton(R.string.menu_back, (d, w) -> openSystemMenu())
+                .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
                 .show();
     }
 
     // ── Display-Untermenü ─────────────────────────────────────────────────────
 
-    private void showDisplayMenu(android.content.DialogInterface.OnDismissListener onDismiss) {
+    private void showDisplayMenu() {
         String[] items = {
             activity.getString(R.string.menu_zoom),
             activity.getString(R.string.menu_marquee),
@@ -220,14 +201,14 @@ public class TabMenu {
                         case 1: showMarqueeConfig(); break;
                     }
                 })
-                .setOnDismissListener(onDismiss)
-                .setNegativeButton(R.string.close, null)
+                .setPositiveButton(R.string.menu_back, (d, w) -> openSystemMenu())
+                .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
                 .show();
     }
 
     // ── Software-Untermenü ────────────────────────────────────────────────────
 
-    private void showSoftwareMenu(android.content.DialogInterface.OnDismissListener onDismiss) {
+    private void showSoftwareMenu() {
         String[] items = {
             activity.getString(R.string.menu_app_shortcuts),
         };
@@ -237,14 +218,14 @@ public class TabMenu {
                     resetAdminTimeout();
                     if (which == 0) showAppShortcuts();
                 })
-                .setOnDismissListener(onDismiss)
-                .setNegativeButton(R.string.close, null)
+                .setPositiveButton(R.string.menu_back, (d, w) -> openSystemMenu())
+                .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
                 .show();
     }
 
     // ── Updates-Untermenü ─────────────────────────────────────────────────────
 
-    private void showUpdatesMenu(android.content.DialogInterface.OnDismissListener onDismiss) {
+    private void showUpdatesMenu() {
         String[] items = {
             activity.getString(R.string.menu_autoupdate),
             activity.getString(R.string.menu_check_update),
@@ -258,8 +239,8 @@ public class TabMenu {
                         case 1: checkUpdateNow();  break;
                     }
                 })
-                .setOnDismissListener(onDismiss)
-                .setNegativeButton(R.string.close, null)
+                .setPositiveButton(R.string.menu_back, (d, w) -> openSystemMenu())
+                .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
                 .show();
     }
 

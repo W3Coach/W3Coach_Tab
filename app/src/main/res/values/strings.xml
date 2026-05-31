@@ -74,6 +74,8 @@
     <string name="menu_updates">Updates…</string>
     <string name="close">Close</string>
 
+    <string name="menu_back">← Back</string>
+
     <!-- General -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
