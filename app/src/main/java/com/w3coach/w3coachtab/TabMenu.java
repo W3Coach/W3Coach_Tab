@@ -113,6 +113,10 @@ public class TabMenu {
     }
 
     private void openSystemMenu() {
+        String usbLabel = prefs.usbRestricted()
+                ? activity.getString(R.string.menu_usb_unlock)
+                : activity.getString(R.string.menu_usb_lock);
+
         String[] items = {
             activity.getString(R.string.menu_web),
             activity.getString(R.string.menu_display),
@@ -120,7 +124,9 @@ public class TabMenu {
             activity.getString(R.string.menu_updates),
             activity.getString(R.string.wg_configure),
             "──────────────────────",
-            activity.getString(R.string.menu_system),
+            usbLabel,
+            activity.getString(R.string.menu_reboot),
+            activity.getString(R.string.menu_settings),
         };
 
         android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<String>(
@@ -133,31 +139,33 @@ public class TabMenu {
 
         final boolean[] openedSubmenu = {false};
 
-        new AlertDialog.Builder(activity)
+        AlertDialog mainDialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.menu_system)
                 .setAdapter(adapter, (dialog, which) -> {
                     resetAdminTimeout();
                     openedSubmenu[0] = true;
+                    dialog.dismiss();
                     switch (which) {
-                        case 0: showWebMenu();      break;
-                        case 1: showDisplayMenu();  break;
-                        case 2: showSoftwareMenu(); break;
-                        case 3: showUpdatesMenu();  break;
+                        case 0: showWebMenu();           break;
+                        case 1: showDisplayMenu();       break;
+                        case 2: showSoftwareMenu();      break;
+                        case 3: showUpdatesMenu();       break;
                         case 4: wgManager.showConfigDialog(); break;
                         // case 5: Trennlinie
-                        case 6: showSystemSubMenu(); break;
+                        case 6: toggleUsbRestriction();  break;
+                        case 7: confirmReboot();         break;
+                        case 8: openSystemSettings();    break;
                     }
                 })
                 .setOnDismissListener(d -> {
-                    // Nur wieder öffnen wenn ein Untermenü gewählt wurde
-                    // und Admin-Session noch aktiv ist
                     if (openedSubmenu[0] && adminUnlocked &&
                             (System.currentTimeMillis() - adminUnlockedAt) < ADMIN_TIMEOUT_MS) {
                         openSystemMenu();
                     }
                 })
                 .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
-                .show();
+                .create();
+        mainDialog.show();
     }
 
     // ── Web-Untermenü ─────────────────────────────────────────────────────────
@@ -236,43 +244,6 @@ public class TabMenu {
                     switch (which) {
                         case 0: showAutoUpdate();  break;
                         case 1: checkUpdateNow();  break;
-                    }
-                })
-                .setNegativeButton(R.string.close, null)
-                .show();
-    }
-
-    // ── System-Untermenü ──────────────────────────────────────────────────────
-
-    private void showSystemSubMenu() {
-        String usbLabel = prefs.usbRestricted()
-                ? activity.getString(R.string.menu_usb_unlock)
-                : activity.getString(R.string.menu_usb_lock);
-
-        String[] items = {
-            usbLabel,
-            "──────────────────────",
-            activity.getString(R.string.menu_settings),
-            activity.getString(R.string.menu_reboot),
-        };
-
-        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<String>(
-                activity, android.R.layout.select_dialog_item, items) {
-            @Override public boolean areAllItemsEnabled() { return false; }
-            @Override public boolean isEnabled(int position) {
-                return !items[position].startsWith("──");
-            }
-        };
-
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.menu_system)
-                .setAdapter(adapter, (dialog, which) -> {
-                    resetAdminTimeout();
-                    switch (which) {
-                        case 0: toggleUsbRestriction(); break;
-                        // case 1: Trennlinie
-                        case 2: openSystemSettings();   break;
-                        case 3: confirmReboot();        break;
                     }
                 })
                 .setNegativeButton(R.string.close, null)

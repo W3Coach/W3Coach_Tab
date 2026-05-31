@@ -18,6 +18,22 @@ public class RebootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "Reboot-Alarm ausgeloest");
+
+        // Alarm canceln damit er nicht nochmal feuert
+        android.app.AlarmManager am =
+                (android.app.AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent cancelIntent = new Intent(context, RebootReceiver.class);
+        cancelIntent.setAction("com.w3coach.w3coachtab.REBOOT");
+        android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(
+                context, 0, cancelIntent,
+                android.app.PendingIntent.FLAG_NO_CREATE |
+                android.app.PendingIntent.FLAG_IMMUTABLE);
+        if (pi != null && am != null) {
+            am.cancel(pi);
+            pi.cancel();
+            Log.i(TAG, "Reboot-Alarm gecancelt");
+        }
+
         DevicePolicyManager dpm =
                 (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName admin =
