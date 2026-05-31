@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         ws.setTextZoom(prefs.zoom());
         ws.setCacheMode(WebSettings.LOAD_DEFAULT);
         ws.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        WebView.setWebContentsDebuggingEnabled(true);
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
 
         // User-Agent: Standard-UA + Kennung fuer Geraete-Erkennung in der Webapplikation
         ws.setUserAgentString(ws.getUserAgentString() + " w3coachtab");

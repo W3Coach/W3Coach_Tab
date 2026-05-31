@@ -123,11 +123,13 @@ public class TabMenu {
             activity.getString(R.string.menu_url3) + "  " + truncate(prefs.url3()),
             activity.getString(R.string.menu_autologin),
             activity.getString(R.string.menu_marquee),
+            activity.getString(R.string.menu_zoom),
             activity.getString(R.string.menu_app_shortcuts),
             activity.getString(R.string.menu_autoupdate),
             activity.getString(R.string.menu_check_update),
             activity.getString(R.string.wg_configure),
             usbLabel,
+            activity.getString(R.string.menu_clear_cache),
             activity.getString(R.string.menu_settings),
             activity.getString(R.string.menu_reboot),
         };
@@ -142,13 +144,15 @@ public class TabMenu {
                         case 2:  editUrl(3);                       break;
                         case 3:  showAutoLogin();                  break;
                         case 4:  showMarqueeConfig();              break;
-                        case 5:  showAppShortcuts();               break;
-                        case 6:  showAutoUpdate();                 break;
-                        case 7:  checkUpdateNow();                 break;
-                        case 8:  wgManager.showConfigDialog();     break;
-                        case 9:  toggleUsbRestriction();           break;
-                        case 10: openSystemSettings();             break;
-                        case 11: confirmReboot();                  break;
+                        case 5:  showZoom();                       break;
+                        case 6:  showAppShortcuts();               break;
+                        case 7:  showAutoUpdate();                 break;
+                        case 8:  checkUpdateNow();                 break;
+                        case 9:  wgManager.showConfigDialog();     break;
+                        case 10: toggleUsbRestriction();           break;
+                        case 11: clearWebViewCache();              break;
+                        case 12: openSystemSettings();             break;
+                        case 13: confirmReboot();                  break;
                     }
                 })
                 .show();
@@ -467,7 +471,8 @@ public class TabMenu {
                 GithubUpdateChecker.downloadApk(info.downloadUrl, apk);
 
                 if (prefs.updateRebootNow()) {
-                    // Alarm setzen
+                    // Timestamp speichern
+                    prefs.setLastUpdateTimestamp(System.currentTimeMillis());
                     RebootReceiver.schedule(activity, 20000);
                     // Countdown-Overlay anzeigen
                     new Handler(Looper.getMainLooper()).post(() -> showRebootCountdown(20));
@@ -553,6 +558,15 @@ public class TabMenu {
         } else {
             ToastHelper.error(activity, activity.getString(R.string.usb_no_owner));
         }
+    }
+
+    // ── Cache leeren ──────────────────────────────────────────────────────────
+
+    private void clearWebViewCache() {
+        webView.clearCache(true);
+        webView.clearHistory();
+        ToastHelper.success(activity, activity.getString(R.string.cache_cleared));
+        ((MainActivity) activity).loadCurrentUrl();
     }
 
     // ── Systemeinstellungen ───────────────────────────────────────────────────

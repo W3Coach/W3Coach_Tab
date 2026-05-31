@@ -86,7 +86,7 @@ public class GithubUpdateChecker {
         HttpURLConnection c = (HttpURLConnection) url.openConnection();
         c.setConnectTimeout(15000);
         c.setReadTimeout(30000);
-        c.setRequestProperty("User-Agent", "W3CoachTV-Updater/1.0");
+        c.setRequestProperty("User-Agent", "W3CoachTab-Updater/1.0");
         c.setInstanceFollowRedirects(true);
         return c;
     }

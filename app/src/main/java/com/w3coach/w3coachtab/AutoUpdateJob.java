@@ -63,19 +63,6 @@ public class AutoUpdateJob extends JobService {
         return true;
     }
 
-    public static void scheduleReboot(Context ctx, long delayMs) {
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            android.app.admin.DevicePolicyManager dpm =
-                    (android.app.admin.DevicePolicyManager)
-                    ctx.getSystemService(Context.DEVICE_POLICY_SERVICE);
-            android.content.ComponentName admin =
-                    new android.content.ComponentName(ctx, KioskAdminReceiver.class);
-            if (dpm != null && dpm.isDeviceOwnerApp(ctx.getPackageName())) {
-                dpm.reboot(admin);
-            }
-        }, delayMs);
-    }
-
     public static long getDelayMillis(String time) {
         try {
             String[] parts = time.split(":");
@@ -112,6 +99,7 @@ public class AutoUpdateJob extends JobService {
 
             // Reboot VOR der Installation planen – Prozess wird durch Installation beendet
             Prefs appPrefs = new Prefs(ctx);
+            appPrefs.setLastUpdateTimestamp(System.currentTimeMillis());
             if (appPrefs.updateRebootNow()) {
                 RebootReceiver.schedule(ctx, 20000);
             } else {

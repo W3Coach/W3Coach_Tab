@@ -11,9 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -28,35 +31,51 @@ public class AboutActivity extends AppCompatActivity {
         layout.setPadding(64, 64, 64, 64);
         setContentView(layout);
 
-        addLabel(layout, getString(R.string.app_name),                              32f, 0xFFFFFFFF, true);
-        addLabel(layout, getString(R.string.about_version) + ": " + BuildConfig.VERSION_NAME, 18f, 0xFFAAAAAA, false);
-        addLabel(layout, getString(R.string.about_device)  + ": " + Build.MODEL,   16f, 0xFFAAAAAA, false);
+        Prefs prefs = new Prefs(this);
 
-        // Alle aktiven IPv4-Adressen anzeigen (Ethernet/PoE + WLAN)
+        addLabel(layout, getString(R.string.app_name), 32f, 0xFFFFFFFF, true);
+
+        // Version: Name + Code
+        addLabel(layout, getString(R.string.about_version) + ": "
+                + BuildConfig.VERSION_NAME
+                + " (" + BuildConfig.VERSION_CODE + ")",
+                18f, 0xFFAAAAAA, false);
+
+        // Gerätemodell
+        addLabel(layout, getString(R.string.about_device) + ": " + Build.MODEL,
+                16f, 0xFFAAAAAA, false);
+
+        // IP-Adressen (alle Interfaces)
         for (String line : getIpAddresses()) {
             addLabel(layout, line, 16f, 0xFFAAAAAA, false);
         }
 
-        // VPN-IP anzeigen wenn Tunnel aktiv
+        // WireGuard Status
         if (WireGuardService.isConnected) {
-            Prefs prefs = new Prefs(this);
             String vpnIp = prefs.wgClientIp().replace("/32", "").replace("/24", "");
-            addLabel(layout, getString(R.string.about_vpn_ip) + ": " + vpnIp, 16f, 0xFF2ECC71, false);
+            addLabel(layout, getString(R.string.about_vpn_ip) + ": " + vpnIp,
+                    16f, 0xFF2ECC71, false);
+        } else {
+            addLabel(layout, getString(R.string.about_vpn_disconnected),
+                    16f, 0xFFE74C3C, false);
+        }
+
+        // Letztes Update-Datum
+        long lastUpdate = prefs.lastUpdateTimestamp();
+        if (lastUpdate > 0) {
+            String date = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+                    .format(new Date(lastUpdate));
+            addLabel(layout, getString(R.string.about_last_update) + ": " + date,
+                    16f, 0xFFAAAAAA, false);
         }
     }
 
-    /**
-     * Liefert alle aktiven IPv4-Adressen aller Netzwerk-Interfaces
-     * (eth0/PoE, wlan0/WLAN, usw.) als formatierte Strings.
-     * Loopback (127.x), Link-Local (169.254.x) und Tunnel-Interfaces werden uebersprungen.
-     */
     private List<String> getIpAddresses() {
         List<String> result = new ArrayList<>();
         try {
             for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 if (!iface.isUp() || iface.isLoopback()) continue;
-                String name = iface.getName(); // z.B. "eth0", "wlan0"
-                // WireGuard-/Tunnel-Interface ausblenden (wird separat angezeigt)
+                String name = iface.getName();
                 if (name.startsWith("tun") || name.startsWith("wg")) continue;
                 for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
                     if (!(addr instanceof Inet4Address)) continue;

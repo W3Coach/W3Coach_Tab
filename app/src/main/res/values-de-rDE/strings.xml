@@ -63,6 +63,11 @@
     <string name="reboot_countdown">Neustart in %1$d Sekunden…</string>
     <string name="reboot_scheduled">Update installiert. Neustart um %1$s</string>
 
+    <string name="about_vpn_disconnected">VPN: getrennt</string>
+    <string name="about_last_update">Letztes Update</string>
+    <string name="menu_clear_cache">WebView-Cache leeren</string>
+    <string name="cache_cleared">Cache geleert</string>
+
     <!-- General -->
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>

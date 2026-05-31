@@ -108,4 +108,8 @@ public class Prefs {
     // USB-Speicher-Sperre
     public boolean usbRestricted()             { return prefs.getBoolean(KEY_USB_RESTRICTED, false); }
     public void setUsbRestricted(boolean v)    { prefs.edit().putBoolean(KEY_USB_RESTRICTED, v).apply(); }
+
+    // Letztes Update
+    public long lastUpdateTimestamp()          { return prefs.getLong("lastUpdateTimestamp", 0); }
+    public void setLastUpdateTimestamp(long v) { prefs.edit().putLong("lastUpdateTimestamp", v).apply(); }
 }
