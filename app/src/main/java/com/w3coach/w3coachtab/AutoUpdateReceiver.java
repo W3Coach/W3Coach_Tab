@@ -81,7 +81,7 @@ public class AutoUpdateReceiver extends BroadcastReceiver {
 
         if (!enabled) { Log.i(TAG, "Auto-Update deaktiviert – kein Alarm"); return; }
 
-        int hours = prefs.getInt(AutoUpdateJob.PREF_INTERVAL_HOURS, AutoUpdateJob.DEFAULT_INTERVAL_HOURS);
+        int hours = prefs.getInt(Prefs.KEY_UPDATE_INTERVAL, 12);
         if (hours < AutoUpdateJob.MIN_INTERVAL_HOURS) hours = AutoUpdateJob.MIN_INTERVAL_HOURS;
         long intervalMs = hours * 60L * 60L * 1000L;
 
