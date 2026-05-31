@@ -94,7 +94,12 @@ public class AutoUpdateJob extends JobService {
             GithubUpdateChecker.UpdateInfo info =
                     GithubUpdateChecker.checkForUpdate(BuildConfig.UPDATE_URL, BuildConfig.VERSION_CODE);
 
-            if (info == null) { Log.i(TAG, "Aktuell"); jobFinished(params, false); return; }
+            if (info == null) {
+                Log.i(TAG, "Aktuell");
+                schedule(ctx);
+                jobFinished(params, false);
+                return;
+            }
 
             File apk = new File(ctx.getCacheDir(), "w3coachtab_update.apk");
             if (apk.exists()) apk.delete();
