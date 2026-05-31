@@ -39,7 +39,7 @@
 
     <!-- Auto-Update -->
     <string name="dlg_autoupdate_title">Auto-Update</string>
-    <string name="dlg_autoupdate_interval">Interval (hours)</string>
+    <string name="dlg_autoupdate_interval">Interval (minutes – TEST)</string>
     <string name="update_reboot_title">Reboot after update</string>
     <string name="update_reboot_now">Immediately</string>
     <string name="update_reboot_scheduled">Scheduled</string>

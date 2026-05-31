@@ -21,7 +21,7 @@ public class AutoUpdateJob extends JobService {
     public  static final String PREF_ENABLED          = "autoUpdate";
     public  static final String PREF_INTERVAL_HOURS   = "updateIntervalHours";
     public  static final int    DEFAULT_INTERVAL_HOURS = 4;
-    public  static final int    MIN_INTERVAL_HOURS     = 1;
+    public  static final int    MIN_INTERVAL_HOURS     = 1;  // Minuten (Testmodus)
 
     private ExecutorService executor;
 
@@ -39,10 +39,13 @@ public class AutoUpdateJob extends JobService {
         int hours = prefs.getInt(PREF_INTERVAL_HOURS, DEFAULT_INTERVAL_HOURS);
         if (hours < MIN_INTERVAL_HOURS) hours = MIN_INTERVAL_HOURS;
 
+        long intervalMs = hours * 60L * 1000L; // Minuten (Testmodus – für Produktion: hours * 60L * 60L * 1000L)
+
         JobInfo job = new JobInfo.Builder(JOB_ID,
                 new ComponentName(context, AutoUpdateJob.class))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(hours * 60L * 60L * 1000L)
+                .setMinimumLatency(intervalMs)
+                .setOverrideDeadline(intervalMs * 2)
                 .setPersisted(true)
                 .build();
 
@@ -106,13 +109,18 @@ public class AutoUpdateJob extends JobService {
                 RebootReceiver.schedule(ctx, getDelayMillis(appPrefs.updateRebootTime()));
             }
 
+            // Job neu planen bevor Installation den Prozess beendet
+            schedule(ctx);
+
             SilentInstaller.install(ctx, apk);
             apk.deleteOnExit();
 
             jobFinished(params, false);
         } catch (Exception e) {
             Log.e(TAG, "Update-Fehler: " + e.getMessage(), e);
+            schedule(ctx);
             jobFinished(params, true);
         }
+        schedule(ctx);
     }
 }
