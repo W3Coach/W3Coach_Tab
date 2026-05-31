@@ -113,48 +113,162 @@ public class TabMenu {
     }
 
     private void openSystemMenu() {
-        String usbLabel = prefs.usbRestricted()
-                ? activity.getString(R.string.menu_usb_unlock)
-                : activity.getString(R.string.menu_usb_lock);
+        String[] items = {
+            activity.getString(R.string.menu_web),
+            activity.getString(R.string.menu_display),
+            activity.getString(R.string.menu_software),
+            activity.getString(R.string.menu_updates),
+            activity.getString(R.string.wg_configure),
+            "──────────────────────",
+            activity.getString(R.string.menu_system),
+        };
 
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<String>(
+                activity, android.R.layout.select_dialog_item, items) {
+            @Override public boolean areAllItemsEnabled() { return false; }
+            @Override public boolean isEnabled(int position) {
+                return !items[position].startsWith("──");
+            }
+        };
+
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.menu_system)
+                .setAdapter(adapter, (dialog, which) -> {
+                    resetAdminTimeout();
+                    switch (which) {
+                        case 0: showWebMenu();      break;
+                        case 1: showDisplayMenu();  break;
+                        case 2: showSoftwareMenu(); break;
+                        case 3: showUpdatesMenu();  break;
+                        case 4: wgManager.showConfigDialog(); break;
+                        // case 5: Trennlinie
+                        case 6: showSystemSubMenu(); break;
+                    }
+                    if (which != 5) {
+                        new android.os.Handler(android.os.Looper.getMainLooper())
+                                .postDelayed(this::openSystemMenu, 300);
+                    }
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    // ── Web-Untermenü ─────────────────────────────────────────────────────────
+
+    private void showWebMenu() {
         String[] items = {
             activity.getString(R.string.menu_url1) + "  " + truncate(prefs.url1()),
             activity.getString(R.string.menu_url2) + "  " + truncate(prefs.url2()),
             activity.getString(R.string.menu_url3) + "  " + truncate(prefs.url3()),
             activity.getString(R.string.menu_autologin),
-            activity.getString(R.string.menu_marquee),
+            activity.getString(R.string.menu_clear_cache),
+        };
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.menu_web)
+                .setItems(items, (dialog, which) -> {
+                    resetAdminTimeout();
+                    switch (which) {
+                        case 0: editUrl(1);          break;
+                        case 1: editUrl(2);          break;
+                        case 2: editUrl(3);          break;
+                        case 3: showAutoLogin();     break;
+                        case 4: clearWebViewCache(); break;
+                    }
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    // ── Display-Untermenü ─────────────────────────────────────────────────────
+
+    private void showDisplayMenu() {
+        String[] items = {
             activity.getString(R.string.menu_zoom),
+            activity.getString(R.string.menu_marquee),
+        };
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.menu_display)
+                .setItems(items, (dialog, which) -> {
+                    resetAdminTimeout();
+                    switch (which) {
+                        case 0: showZoom();         break;
+                        case 1: showMarqueeConfig(); break;
+                    }
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    // ── Software-Untermenü ────────────────────────────────────────────────────
+
+    private void showSoftwareMenu() {
+        String[] items = {
             activity.getString(R.string.menu_app_shortcuts),
+        };
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.menu_software)
+                .setItems(items, (dialog, which) -> {
+                    resetAdminTimeout();
+                    if (which == 0) showAppShortcuts();
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    // ── Updates-Untermenü ─────────────────────────────────────────────────────
+
+    private void showUpdatesMenu() {
+        String[] items = {
             activity.getString(R.string.menu_autoupdate),
             activity.getString(R.string.menu_check_update),
-            activity.getString(R.string.wg_configure),
+        };
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.menu_updates)
+                .setItems(items, (dialog, which) -> {
+                    resetAdminTimeout();
+                    switch (which) {
+                        case 0: showAutoUpdate();  break;
+                        case 1: checkUpdateNow();  break;
+                    }
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    // ── System-Untermenü ──────────────────────────────────────────────────────
+
+    private void showSystemSubMenu() {
+        String usbLabel = prefs.usbRestricted()
+                ? activity.getString(R.string.menu_usb_unlock)
+                : activity.getString(R.string.menu_usb_lock);
+
+        String[] items = {
             usbLabel,
-            activity.getString(R.string.menu_clear_cache),
+            "──────────────────────",
             activity.getString(R.string.menu_settings),
             activity.getString(R.string.menu_reboot),
         };
 
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<String>(
+                activity, android.R.layout.select_dialog_item, items) {
+            @Override public boolean areAllItemsEnabled() { return false; }
+            @Override public boolean isEnabled(int position) {
+                return !items[position].startsWith("──");
+            }
+        };
+
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.menu_system)
-                .setItems(items, (dialog, which) -> {
+                .setAdapter(adapter, (dialog, which) -> {
                     resetAdminTimeout();
                     switch (which) {
-                        case 0:  editUrl(1);                       break;
-                        case 1:  editUrl(2);                       break;
-                        case 2:  editUrl(3);                       break;
-                        case 3:  showAutoLogin();                  break;
-                        case 4:  showMarqueeConfig();              break;
-                        case 5:  showZoom();                       break;
-                        case 6:  showAppShortcuts();               break;
-                        case 7:  showAutoUpdate();                 break;
-                        case 8:  checkUpdateNow();                 break;
-                        case 9:  wgManager.showConfigDialog();     break;
-                        case 10: toggleUsbRestriction();           break;
-                        case 11: clearWebViewCache();              break;
-                        case 12: openSystemSettings();             break;
-                        case 13: confirmReboot();                  break;
+                        case 0: toggleUsbRestriction(); break;
+                        // case 1: Trennlinie
+                        case 2: openSystemSettings();   break;
+                        case 3: confirmReboot();        break;
                     }
                 })
+                .setNegativeButton(R.string.close, null)
                 .show();
     }
 

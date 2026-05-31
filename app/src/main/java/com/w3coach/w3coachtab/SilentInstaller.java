@@ -48,7 +48,7 @@ public class SilentInstaller {
         }
 
         Intent resultIntent = new Intent(context, RebootReceiver.class);
-        resultIntent.setAction("com.w3coach.w3coachtab.INSTALL_COMPLETE");
+        resultIntent.setAction("com.w3coach.w3coachtab.REBOOT");
 
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
 

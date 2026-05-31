@@ -68,6 +68,12 @@
     <string name="menu_clear_cache">WebView-Cache leeren</string>
     <string name="cache_cleared">Cache geleert</string>
 
+    <string name="menu_web">Web…</string>
+    <string name="menu_display">Anzeige…</string>
+    <string name="menu_software">Software…</string>
+    <string name="menu_updates">Updates…</string>
+    <string name="close">Schließen</string>
+
     <!-- General -->
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>
