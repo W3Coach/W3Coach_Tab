@@ -131,10 +131,13 @@ public class TabMenu {
             }
         };
 
+        final boolean[] openedSubmenu = {false};
+
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.menu_system)
                 .setAdapter(adapter, (dialog, which) -> {
                     resetAdminTimeout();
+                    openedSubmenu[0] = true;
                     switch (which) {
                         case 0: showWebMenu();      break;
                         case 1: showDisplayMenu();  break;
@@ -144,12 +147,16 @@ public class TabMenu {
                         // case 5: Trennlinie
                         case 6: showSystemSubMenu(); break;
                     }
-                    if (which != 5) {
-                        new android.os.Handler(android.os.Looper.getMainLooper())
-                                .postDelayed(this::openSystemMenu, 300);
+                })
+                .setOnDismissListener(d -> {
+                    // Nur wieder öffnen wenn ein Untermenü gewählt wurde
+                    // und Admin-Session noch aktiv ist
+                    if (openedSubmenu[0] && adminUnlocked &&
+                            (System.currentTimeMillis() - adminUnlockedAt) < ADMIN_TIMEOUT_MS) {
+                        openSystemMenu();
                     }
                 })
-                .setNegativeButton(R.string.close, null)
+                .setNegativeButton(R.string.close, (d, w) -> lockAdmin())
                 .show();
     }
 
