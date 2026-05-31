@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     // ── Marquee ───────────────────────────────────────────────────────────────
 
-    private void scheduleMarquee() {
+    public void scheduleMarquee() {
         if (marqueeHandler == null) marqueeHandler = new Handler(Looper.getMainLooper());
         if (marqueeRunnable != null) marqueeHandler.removeCallbacks(marqueeRunnable);
 

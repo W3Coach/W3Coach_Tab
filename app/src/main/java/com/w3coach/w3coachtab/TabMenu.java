@@ -368,6 +368,7 @@ public class TabMenu {
                 .setSingleChoiceItems(options, selected, (d, which) -> {
                     prefs.setMarqueeDelay(values[which]);
                     d.dismiss();
+                    ((MainActivity) activity).scheduleMarquee();
                     ToastHelper.success(activity, activity.getString(R.string.saved));
                 })
                 .setNegativeButton(R.string.cancel, null)

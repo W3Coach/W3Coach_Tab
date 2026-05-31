@@ -39,7 +39,7 @@ public class AutoUpdateJob extends JobService {
         int hours = prefs.getInt(PREF_INTERVAL_HOURS, DEFAULT_INTERVAL_HOURS);
         if (hours < MIN_INTERVAL_HOURS) hours = MIN_INTERVAL_HOURS;
 
-        long intervalMs = hours * 60L * 1000L; // Minuten (Testmodus – für Produktion: hours * 60L * 60L * 1000L)
+        long intervalMs = hours * 60L * 60L * 1000L; // Stunden
 
         JobInfo job = new JobInfo.Builder(JOB_ID,
                 new ComponentName(context, AutoUpdateJob.class))
