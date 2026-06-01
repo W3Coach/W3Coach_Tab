@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
         if (marqueeRunnable != null) marqueeHandler.removeCallbacks(marqueeRunnable);
 
         int delayMinutes = prefs.marqueeDelay();
+        android.widget.Toast.makeText(this, "Marquee delay: " + delayMinutes + " min", android.widget.Toast.LENGTH_LONG).show();
         if (delayMinutes <= 0) return;
 
         marqueeRunnable = this::showMarquee;
